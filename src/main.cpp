@@ -4,12 +4,18 @@
 #include "servo_driver.h"
 #include <Adafruit_SSD1306.h>
 #include <Arduino.h>
+#include <WiFiUdp.h>
 #include <Wire.h>
+#include <esp_timer.h>
 
 TwoWire i2cBus = TwoWire{0};
 ServoDriver servo{I2C_SERVO_ADDRESS, i2cBus};
 Logger logger{I2C_DISPLAY_ADDRESS, i2cBus};
 Network network{logger};
+WiFiUDP udpOutputPort;
+WiFiUDP udpInputPort;
+
+void timerCallback(void* arg);
 
 void displayI2cDevices() {
     char deviceNames[22] = {' '};
@@ -54,21 +60,32 @@ void setup() {
     }
     logger.printf("Initializing WiFi...");
     network.begin();
-    delay(600);
+    udpInputPort.begin(21370);
+    udpOutputPort.begin(21371);
+    // Initialize timer
+    esp_timer_create_args_t timerArgs = {
+        .callback = &timerCallback, .arg = (void*)0, .name = "network_timer"};
+    esp_timer_handle_t timer;
+    esp_timer_create(&timerArgs, &timer);
+    esp_timer_start_periodic(timer, 1e6);
 }
 
-int sweep = 0;
-const int loop_delay = 1;
-
 void loop() {
-    for (int i = 0; i < 4096; ++i) {
-        servo.setPWM(1, i);
-        servo.setPWM(0, i);
-        delay(loop_delay);
+    int packetSize = udpInputPort.parsePacket();
+    if (packetSize == 4) {
+        uint8_t message[4];
+        udpInputPort.read(message, packetSize);
+        if (message[0] == 0x01) { // Servo command
+            servo.setPWM(0, map(message[1], 0, 263, 0, 4095));
+            servo.setPWM(1, map(message[2], 0, 255, 0, 4095));
+        }
     }
-    for (int i = 0; i < 4096; ++i) {
-        servo.setPWM(1, 4096 - i);
-        servo.setPWM(0, 4096 - i);
-        delay(loop_delay);
-    }
+    delay(5);
+}
+
+void timerCallback(void* arg) {
+    byte buffer[] = {0x01, 0x01, 0x01, 0x42};
+    udpOutputPort.beginPacket("255.255.255.255", 21371);
+    udpOutputPort.write(buffer, sizeof(buffer));
+    udpOutputPort.endPacket();
 }
