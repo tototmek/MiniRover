@@ -7,7 +7,7 @@
 class Network {
   public:
     Network(Logger& logger);
-    void begin();
+    bool begin();
 
   private:
     Logger& logger_;
