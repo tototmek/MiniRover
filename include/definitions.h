@@ -9,6 +9,9 @@
 // I2C device addresses
 #define I2C_SERVO_ADDRESS 0x40
 #define I2C_DISPLAY_ADDRESS 0x3C
-#define I2C_BMS_ADDRESS unspecified yet
+
+// UDP ports
+#define UDP_IN_PORT 21370
+#define UDP_OUT_PORT 21371
 
 #endif // DEFINITIONS_H
