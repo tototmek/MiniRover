@@ -3,6 +3,8 @@
 
 #include <cstdint>
 
+constexpr uint8_t kBuzzerPulseWidth = 80;
+
 class Buzzer {
   public:
     Buzzer(uint8_t pin);
@@ -10,6 +12,9 @@ class Buzzer {
     void on();
     void off();
     void blockingPulse(uint32_t onTime, uint32_t offTime = 0);
+    void ok();
+    void wait();
+    void error();
 
   private:
     uint8_t pin_;
