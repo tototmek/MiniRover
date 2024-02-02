@@ -19,6 +19,7 @@ Connection connection;
 
 void setup() {
     buzzer.begin();
+    buzzer.wait();
     Serial.begin(115200);
     while (!Serial) {
         ;
