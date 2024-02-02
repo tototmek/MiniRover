@@ -1,5 +1,7 @@
 #include "connection.h"
 #include "definitions.h"
+#include "i2c.h"
+#include "joint_controller.h"
 #include "logger.h"
 #include "network.h"
 #include "servo_driver.h"
@@ -7,32 +9,17 @@
 #include <Arduino.h>
 #include <WiFiUdp.h>
 #include <Wire.h>
+#include <esp_timer.h>
 
 TwoWire i2cBus = TwoWire{0};
 ServoDriver servo{I2C_SERVO_ADDRESS, i2cBus};
 Logger logger{I2C_DISPLAY_ADDRESS, i2cBus};
 Network network{logger};
 Connection connection;
+JointController velocityController{servo, 0};
+JointController angleController{servo, 1};
 
-void displayI2cDevices() {
-    char deviceNames[22] = {' '};
-    byte error, address;
-    int charIdx = 0;
-    logger.printf("Detected I2C chips:");
-    for (address = 1; address < 127; address++) {
-        i2cBus.beginTransmission(address);
-        error = i2cBus.endTransmission();
-        if (error == 0) {
-            charIdx += sprintf(deviceNames + charIdx, "%02X ", address);
-            if (charIdx >= 18) {
-                charIdx = 0;
-                logger.printf(deviceNames);
-                memset(deviceNames, ' ', sizeof(deviceNames) - 1);
-            }
-        }
-    }
-    logger.printf(deviceNames);
-}
+void motorControlCallback(void* arg);
 
 void setup() {
     Serial.begin(9600);
@@ -45,7 +32,7 @@ void setup() {
     delay(600);
     logger.printf("System started");
     delay(300);
-    displayI2cDevices();
+    displayI2cDevices(i2cBus, logger);
     if (!servo.begin()) {
         logger.printf("Servo driver: off");
     } else {
@@ -58,6 +45,11 @@ void setup() {
     Message broadcastMessage = {.data = {0x01, 0x01, 0x01, 0x01}};
     connection.setBroadcastMessage(&broadcastMessage);
     connection.begin();
+    esp_timer_handle_t timer;
+    esp_timer_create_args_t timerArgs = {.callback = motorControlCallback,
+                                         .arg = (void*)0};
+    esp_timer_create(&timerArgs, &timer);
+    esp_timer_start_periodic(timer, 1e4);
 }
 
 void loop() {
@@ -70,6 +62,16 @@ void loop() {
             Serial.print(" ");
         }
         Serial.println();
+        if (message.data[0] = 0x01) {
+            velocityController.setPosition(
+                map(message.data[1], 0, 255, 0, 4095));
+            angleController.setPosition(map(message.data[3], 0, 255, 0, 4096));
+        }
     }
     delay(30);
+}
+
+void motorControlCallback(void* arg) {
+    angleController.step();
+    velocityController.step();
 }
