@@ -1,3 +1,4 @@
+#include "buzzer.h"
 #include "connection.h"
 #include "definitions.h"
 #include "i2c.h"
@@ -12,17 +13,20 @@
 #include <esp_timer.h>
 
 TwoWire i2cBus = TwoWire{0};
-ServoDriver servo{I2C_SERVO_ADDRESS, i2cBus};
 Logger logger{I2C_DISPLAY_ADDRESS, i2cBus};
-Network network{logger};
-Connection connection;
+ServoDriver servo{I2C_SERVO_ADDRESS, i2cBus};
 JointController velocityController{servo, 0};
 JointController angleController{servo, 1};
+Buzzer buzzer{BUZZER_PIN};
+Network network{logger};
+Connection connection;
 
 void motorControlCallback(void* arg);
 
 void setup() {
-    Serial.begin(9600);
+    buzzer.begin();
+    buzzer.blockingPulse(90);
+    Serial.begin(115200);
     while (!Serial) {
         ;
     }
@@ -39,6 +43,8 @@ void setup() {
         logger.printf("Servo driver: OK");
         servo.arm();
         logger.printf("Motors armed");
+        buzzer.blockingPulse(30, 60);
+        buzzer.blockingPulse(30);
     }
     logger.printf("Initializing WiFi...");
     network.begin();
