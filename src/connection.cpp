@@ -33,7 +33,7 @@ bool Connection::begin() {
         esp_timer_start_periodic(statusTimer_, kStatusTimerPeriod) == ESP_OK;
     bool resultR =
         esp_timer_start_periodic(receiveTimer_, kReceiveTimerPeriod) == ESP_OK;
-    return (resultB == ESP_OK && resultR == ESP_OK);
+    return (resultB && resultR);
 }
 
 bool Connection::getMessage(Message* dest) {

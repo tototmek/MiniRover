@@ -28,7 +28,7 @@ void Buzzer::ok() {
 void Buzzer::wait() { blockingPulse(200); }
 
 void Buzzer::error() {
-    blockingPulse(80, 80);
-    blockingPulse(80, 80);
-    blockingPulse(80);
+    blockingPulse(500, 80);
+    blockingPulse(500, 80);
+    blockingPulse(500);
 }
