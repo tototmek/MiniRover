@@ -16,8 +16,12 @@ bool ServoDriver::begin() {
 }
 
 void ServoDriver::setPWM(uint8_t channel, uint16_t pwm) {
-    uint16_t pulseValue = map(pwm, 0, 1 << 12, kServoMinPulse, kServoMaxPulse);
-    driver_.setPWM(channel, 0, pulseValue);
+    if (pwm > kServoMaxPulse) {
+        pwm = kServoMaxPulse;
+    } else if (pwm < kServoMinPulse) {
+        pwm = kServoMinPulse;
+    }
+    driver_.setPWM(channel, 0, pwm);
 }
 
 void ServoDriver::arm() { digitalWrite(SERVO_OE_PIN, LOW); }

@@ -11,6 +11,9 @@
 #define I2C_SERVO_ADDRESS 0x40
 #define I2C_DISPLAY_ADDRESS 0x3C
 
+// WIFI settings
+#define WIFI_CONNECT_TIMEOUT 15000 // miliseconds
+
 // UDP ports
 #define UDP_IN_PORT 21370
 #define UDP_OUT_PORT 21371
@@ -48,5 +51,22 @@
 #define DRIVE_BASE_MAX_VELOCITY_LINEAR_X 0.5   // meters/second
 #define DRIVE_BASE_MAX_VELOCITY_LINEAR_Y 0.5   // meters/second
 #define DRIVE_BASE_MAX_VELOCITY_ANGULAR_Z 0.5  // radians/second
+
+#define REVERSE_FRONT_RIGHT_WHEEL_VELOCITY false
+#define REVERSE_FRONT_LEFT_WHEEL_VELOCITY true
+#define REVERSE_REAR_LEFT_WHEEL_VELOCITY false
+#define REVERSE_REAR_RIGHT_WHEEL_VELOCITY true
+#define REVERSE_FRONT_RIGHT_WHEEL_ANGLE true
+#define REVERSE_FRONT_LEFT_WHEEL_ANGLE false
+#define REVERSE_REAR_LEFT_WHEEL_ANGLE true
+#define REVERSE_REAR_RIGHT_WHEEL_ANGLE false
+
+// Servo calibration
+#define SERVO_MIN_PULSE_TIME 500                   // microseconds
+#define SERVO_MAX_PULSE_TIME 2500                  // microseconds
+#define SERVO_ANGLE_UPPER_LIMIT_PULSE_TIME 2500    // microseconds
+#define SERVO_ANGLE_LOWER_LIMIT_PULSE_TIME 500     // microseconds
+#define SERVO_VELOCITY_UPPER_LIMIT_PULSE_TIME 2000 // microseconds
+#define SERVO_VELOCITY_LOWER_LIMIT_PULSE_TIME 1000 // microseconds
 
 #endif // DEFINITIONS_H

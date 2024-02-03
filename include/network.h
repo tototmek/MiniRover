@@ -2,10 +2,16 @@
 #define NETWORK_H
 
 #include "WiFi.h"
+#include "definitions.h"
 #include "logger.h"
 
-constexpr uint16_t kWiFiConnectTimeout = 15000;
+// This is how long the robot will wait for a wifi connection before creating
+// own access point (milliseconds)
+constexpr uint16_t kWiFiConnectTimeout = WIFI_CONNECT_TIMEOUT;
+// Period between re-checking whether the connection has been estabilished
+// (milliseconds)
 constexpr uint16_t kWiFiConnectRetryPeriod = 150;
+// Amount of re-checks whether the connection has been estabilished
 constexpr uint8_t kWiFiConnectRetryIterations =
     kWiFiConnectTimeout / kWiFiConnectRetryPeriod;
 

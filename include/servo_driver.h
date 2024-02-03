@@ -5,11 +5,17 @@
 #include <Adafruit_PWMServoDriver.h>
 #include <Wire.h>
 
-constexpr int kServoRate = 330;                    // Hz
-constexpr int kServoMinPulseTime = 500;            // us
-constexpr int kServoMaxPulseTime = 2500;           // us
-constexpr int kServoPeriod = 1000000 / kServoRate; // us
+// Frequency of servo control signal (Hertz)
+constexpr int kServoRate = 330;
+// Minimum valid pulse value of a servo (microseconds)
+constexpr int kServoMinPulseTime = 500;
+// Maximum valid pulse value of a servo (microseconds)
+constexpr int kServoMaxPulseTime = 2500;
+// Servo control signal period (microseconds)
+constexpr int kServoPeriod = 1000000 / kServoRate;
+// Minimum valid pulse value of a servo
 constexpr int kServoMinPulse = (1 << 12) * kServoMinPulseTime / kServoPeriod;
+// Maximum valid pulse value of a servo
 constexpr int kServoMaxPulse = (1 << 12) * kServoMaxPulseTime / kServoPeriod;
 
 class ServoDriver {

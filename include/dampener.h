@@ -3,6 +3,7 @@
 
 #include <cstdint>
 
+// Look-up table used for dampening a signal
 static constexpr uint8_t kDampenerDecelerateLut[4096] = {
 #include "dampener_decelerate_lut.dat"
 };

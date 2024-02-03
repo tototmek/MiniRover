@@ -8,8 +8,10 @@
 #define UDP_MESSAGE_SIZE 4
 #define UDP_MESSAGE_QUEUE_SIZE 5
 
-constexpr uint64_t kStatusTimerPeriod = 1e6;  // 1000000 us = 1 s
-constexpr uint64_t kReceiveTimerPeriod = 1e4; // 10000 us = 10 ms
+// Time between status messages sent by the rover (microseconds)
+constexpr uint64_t kStatusTimerPeriod = 1e6;
+// Period of checking for received messages (microseconds)
+constexpr uint64_t kReceiveTimerPeriod = 1e4;
 
 void statusTimerCallback(void* arg);
 void receiveTimerCallback(void* arg);

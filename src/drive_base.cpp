@@ -10,25 +10,32 @@ void motorControlCallback(void* arg) {
 DriveBase::DriveBase(ServoDriver& servoDriver)
     : velocityControllers_{VelocityJointController{
                                servoDriver,
-                               SERVO_CHANNEL_FRONT_RIGHT_WHEEL_VELOCITY},
+                               SERVO_CHANNEL_FRONT_RIGHT_WHEEL_VELOCITY,
+                               REVERSE_FRONT_RIGHT_WHEEL_VELOCITY},
                            VelocityJointController{
                                servoDriver,
-                               SERVO_CHANNEL_FRONT_LEFT_WHEEL_VELOCITY},
+                               SERVO_CHANNEL_FRONT_LEFT_WHEEL_VELOCITY,
+                               REVERSE_FRONT_LEFT_WHEEL_VELOCITY},
                            VelocityJointController{
                                servoDriver,
-                               SERVO_CHANNEL_REAR_LEFT_WHEEL_VELOCITY},
+                               SERVO_CHANNEL_REAR_LEFT_WHEEL_VELOCITY,
+                               REVERSE_REAR_LEFT_WHEEL_VELOCITY},
                            VelocityJointController{
                                servoDriver,
-                               SERVO_CHANNEL_REAR_RIGHT_WHEEL_VELOCITY}},
+                               SERVO_CHANNEL_REAR_RIGHT_WHEEL_VELOCITY,
+                               REVERSE_REAR_RIGHT_WHEEL_VELOCITY}},
       angleControllers_{
           AngleJointController{servoDriver,
-                               SERVO_CHANNEL_FRONT_RIGHT_WHEEL_ANGLE},
+                               SERVO_CHANNEL_FRONT_RIGHT_WHEEL_ANGLE,
+                               REVERSE_FRONT_RIGHT_WHEEL_ANGLE},
           AngleJointController{servoDriver,
-                               SERVO_CHANNEL_FRONT_LEFT_WHEEL_ANGLE},
+                               SERVO_CHANNEL_FRONT_LEFT_WHEEL_ANGLE,
+                               REVERSE_FRONT_LEFT_WHEEL_ANGLE},
+          AngleJointController{servoDriver, SERVO_CHANNEL_REAR_LEFT_WHEEL_ANGLE,
+                               REVERSE_REAR_LEFT_WHEEL_ANGLE},
           AngleJointController{servoDriver,
-                               SERVO_CHANNEL_REAR_LEFT_WHEEL_ANGLE},
-          AngleJointController{servoDriver,
-                               SERVO_CHANNEL_REAR_RIGHT_WHEEL_ANGLE}} {}
+                               SERVO_CHANNEL_REAR_RIGHT_WHEEL_ANGLE,
+                               REVERSE_REAR_RIGHT_WHEEL_ANGLE}} {}
 
 bool DriveBase::begin() {
     esp_timer_handle_t timer;

@@ -12,11 +12,15 @@ void JointController::step() {
 
 VelocityJointController::VelocityJointController(ServoDriver& servoDriver,
                                                  uint8_t servoChannel,
+                                                 bool reverseMotor,
                                                  float startPosition)
-    : JointController(servoDriver, servoChannel, velocityToPwm(startPosition)) {
-}
+    : JointController(servoDriver, servoChannel, velocityToPwm(startPosition)),
+      reverseMotor_(reverseMotor) {}
 
 void VelocityJointController::setVelocity(float metersPerSecond) {
+    if (reverseMotor_) {
+        metersPerSecond = -metersPerSecond;
+    }
     pulseWidth_ = velocityToPwm(metersPerSecond);
 }
 
@@ -27,13 +31,17 @@ uint16_t VelocityJointController::velocityToPwm(float metersPerSecond) const {
 
 AngleJointController::AngleJointController(ServoDriver& servoDriver,
                                            uint8_t servoChannel,
+                                           bool reverseMotor,
                                            float startPosition)
     : JointController(servoDriver, servoChannel, angleToPwm(startPosition)),
-      currentCommand_(startPosition) {}
+      currentCommand_(startPosition), reverseMotor_(reverseMotor) {}
 
 void AngleJointController::setAngle(float radians) {
-    pulseWidth_ = angleToPwm(radians);
     currentCommand_ = radians;
+    if (reverseMotor_) {
+        radians = -radians;
+    }
+    pulseWidth_ = angleToPwm(radians);
 }
 
 float AngleJointController::getAngle() const { return currentCommand_; }
@@ -43,11 +51,14 @@ float AngleJointController::getActualDampenedAngle() const {
 }
 
 uint16_t AngleJointController::angleToPwm(float radians) const {
-    // TODO: implement correct conversion
-    return 2048;
+    // TODO: test the calibration
+    float t = (radians - kMinAngle) / (kMaxAngle - kMinAngle);
+    uint16_t pwm = kMinPulse + uint16_t(float(kMaxPulse - kMinPulse) * t);
+    return pwm;
 }
 
 float AngleJointController::pwmToAngle(uint16_t pwm) const {
-    // TODO: implement correct conversion
-    return 0.0f;
+    float t = float(pwm - kMinPulse) / float(kMaxPulse - kMinPulse);
+    float radians = kMinAngle + (kMaxAngle - kMinAngle) * t;
+    return radians;
 }

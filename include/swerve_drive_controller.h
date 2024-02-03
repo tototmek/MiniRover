@@ -22,7 +22,9 @@ class SwerveDriveController {
     SwerveDriveController(DriveBase& driveBase);
     void setCommand(TwistCommand command);
     void setCommand(WheelCommand command);
+    // The distance between front and rear wheels of the robot, halved (meters)
     static constexpr float kHalfWheelBase = DRIVE_BASE_WHEEL_BASE / 2.0f;
+    // The distance between left and right wheels of the robot, halved (meters)
     static constexpr float kHalfTrackWidth = DRIVE_BASE_TRACK_WIDTH / 2.0f;
 
   private:

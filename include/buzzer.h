@@ -3,6 +3,7 @@
 
 #include <cstdint>
 
+// Pulse width of the signal driving the buzzer
 constexpr uint8_t kBuzzerPulseWidth = 80;
 
 class Buzzer {
