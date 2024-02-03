@@ -3,7 +3,7 @@
 SwerveDriveController::SwerveDriveController(DriveBase& driveBase)
     : driveBase_(driveBase) {}
 
-void SwerveDriveController::setCommand(Command command) {
+void SwerveDriveController::setCommand(TwistCommand command) {
     // Swerve drive inverse kinematics
     float A = command.linear.y - command.angular.z * kHalfWheelBase / 2.0f;
     float B = command.linear.y + command.angular.z * kHalfWheelBase / 2.0f;
@@ -17,9 +17,27 @@ void SwerveDriveController::setCommand(Command command) {
     targetWheelAngle[FRONT_LEFT] = atan2f(B, D);
     targetWheelAngle[REAR_LEFT] = atan2f(A, D);
     targetWheelAngle[REAR_RIGHT] = atan2f(A, C);
+    processTargetValues();
+    sendTargetValues();
+}
 
+void SwerveDriveController::setCommand(WheelCommand command) {
+    targetWheelVelocity[command.wheel] = command.velocity;
+    targetWheelAngle[command.wheel] = command.angle;
+    processTargetValues();
+    sendTargetValues();
+}
+
+void SwerveDriveController::processTargetValues() {
     // TODO: check if flipped wheels would be better
     // TODO: ensure angles within limits, else stop
     // TODO: ensure velocities within limits, else scale down
     // TODO: scale down velocity / stop if wheel angles are not yet correct
+}
+
+void SwerveDriveController::sendTargetValues() {
+    for (uint8_t i = 0; i < DriveBase::kWheelCount; ++i) {
+        driveBase_.setVelocity(i, targetWheelVelocity[i]);
+        driveBase_.setAngle(i, targetWheelAngle[i]);
+    }
 }

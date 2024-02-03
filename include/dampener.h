@@ -10,7 +10,8 @@ static constexpr uint8_t kDampenerDecelerateLut[4096] = {
 class Dampener {
   public:
     Dampener(uint16_t start_point = 0) : point(start_point) {}
-    uint16_t get_next_point(uint16_t setpoint);
+    uint16_t getNextPoint(uint16_t setpoint);
+    uint16_t getCurrentPoint() const;
 
   private:
     bool direction = false;

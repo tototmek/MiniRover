@@ -5,6 +5,10 @@
 MainSystem mainSystem;
 SwerveDriveController swerveDrive{mainSystem.driveBase};
 
+float mapf(float x, float inMin, float inMax, float outMin, float outMax) {
+    return (x - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
+}
+
 void setup() {
     Serial.begin(115200);
     while (!Serial) {
@@ -31,18 +35,18 @@ void loop() {
         }
         Serial.println();
         if (message.data[0] = 0x01) {
-            SwerveDriveController::Command command;
-            command.linear.x = (message.data[1] - 128.0f) / 128.0f;
-            command.linear.y = (message.data[2] - 128.0f) / 128.0f;
-            command.angular.z = (message.data[3] - 128.0f) / 128.0f;
+            SwerveDriveController::WheelCommand command;
+            command.wheel = FRONT_RIGHT;
+            command.velocity = mapf(message.data[1], 0.0f, 256.0f,
+                                    DRIVE_BASE_MIN_WHEEL_VELOCITY,
+                                    DRIVE_BASE_MAX_WHEEL_VELOCITY);
+            command.angle =
+                mapf(message.data[3], 0.0f, 256.0f, DRIVE_BASE_MIN_WHEEL_ANGLE,
+                     DRIVE_BASE_MAX_WHEEL_ANGLE);
             Serial.print("Command: ");
-            Serial.print("x: ");
-            Serial.print(command.linear.x);
-            Serial.print(", y: ");
-            Serial.print(command.linear.y);
-            Serial.print(", z: ");
-            Serial.print(command.angular.z);
-            Serial.println();
+            Serial.print(command.velocity);
+            Serial.print(", ");
+            Serial.println(command.angle);
             swerveDrive.setCommand(command);
         }
     }

@@ -50,18 +50,18 @@ void DriveBase::step() {
 }
 
 void DriveBase::setVelocity(uint8_t wheelIdx, float metersPerSecond) {
-    velocityControllers_[wheelIdx].setPosition(metersPerSecond);
+    velocityControllers_[wheelIdx].setVelocity(metersPerSecond);
     lastCommandTimestamp_ = millis();
 }
 
 void DriveBase::setAngle(uint8_t wheelIdx, float radians) {
-    angleControllers_[wheelIdx].setPosition(radians);
+    angleControllers_[wheelIdx].setAngle(radians);
     lastCommandTimestamp_ = millis();
 }
 
 void DriveBase::stop() {
     for (uint8_t i = 0; i < kWheelCount; ++i) {
-        velocityControllers_[i].setPosition(0.0f);
-        angleControllers_[i].setPosition(0.0f);
+        velocityControllers_[i].setVelocity(0.0f);
+        angleControllers_[i].setAngle(0.0f);
     }
 }
