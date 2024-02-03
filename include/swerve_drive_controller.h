@@ -21,6 +21,8 @@ class SwerveDriveController {
 
   private:
     DriveBase& driveBase_;
+    float targetWheelVelocity[DriveBase::kWheelCount] = {0.0f};
+    float targetWheelAngle[DriveBase::kWheelCount] = {0.0f};
 };
 
 #endif // SWERVE_DRIVE_CONTROLLER_H
