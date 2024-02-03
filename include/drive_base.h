@@ -10,8 +10,8 @@ class DriveBase {
     DriveBase(ServoDriver& s);
     bool begin();
     void step();
-    void setVelocity(uint8_t wheelIdx, uint16_t command);
-    void setAngle(uint8_t wheelIdx, uint16_t command);
+    void setVelocity(uint8_t wheelIdx, float metersPerSecond);
+    void setAngle(uint8_t wheelIdx, float radians);
     void stop();
     static constexpr uint8_t kWheelCount = 4;
     static constexpr uint64_t kControlPeriod = 1e4;
@@ -19,8 +19,8 @@ class DriveBase {
 
   private:
     uint64_t lastCommandTimestamp_ = 0;
-    JointController velControllers_[kWheelCount];
-    JointController angleControllers_[kWheelCount];
+    VelocityJointController velocityControllers_[kWheelCount];
+    AngleJointController angleControllers_[kWheelCount];
 };
 
 #endif // DRIVE_BASE_H

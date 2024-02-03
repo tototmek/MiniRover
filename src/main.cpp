@@ -32,9 +32,17 @@ void loop() {
         Serial.println();
         if (message.data[0] = 0x01) {
             SwerveDriveController::Command command;
-            command.linear.x = map(message.data[1], 0, 256, 0, 4096);
-            command.linear.y = 0;
-            command.angular.z = map(message.data[3], 0, 256, 0, 4096);
+            command.linear.x = (message.data[1] - 128.0f) / 128.0f;
+            command.linear.y = (message.data[2] - 128.0f) / 128.0f;
+            command.angular.z = (message.data[3] - 128.0f) / 128.0f;
+            Serial.print("Command: ");
+            Serial.print("x: ");
+            Serial.print(command.linear.x);
+            Serial.print(", y: ");
+            Serial.print(command.linear.y);
+            Serial.print(", z: ");
+            Serial.print(command.angular.z);
+            Serial.println();
             swerveDrive.setCommand(command);
         }
     }

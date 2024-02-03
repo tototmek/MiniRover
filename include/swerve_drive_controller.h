@@ -7,15 +7,17 @@ class SwerveDriveController {
   public:
     struct Command {
         struct {
-            uint16_t x = 0;
-            uint16_t y = 0;
+            float x = 0;
+            float y = 0;
         } linear;
         struct {
-            uint16_t z = 0;
+            float z = 0;
         } angular;
     };
     SwerveDriveController(DriveBase& driveBase);
     void setCommand(Command command);
+    static constexpr float kHalfWheelBase = DRIVE_BASE_WHEEL_BASE / 2.0f;
+    static constexpr float kHalfTrackWidth = DRIVE_BASE_TRACK_WIDTH / 2.0f;
 
   private:
     DriveBase& driveBase_;

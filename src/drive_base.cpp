@@ -7,16 +7,28 @@ void motorControlCallback(void* arg) {
     instance->step();
 }
 
-DriveBase::DriveBase(ServoDriver& s)
-    : velControllers_{JointController{s, SERVO_CHANNEL_FRONT_LEFT_WHEEL_VEL},
-                      JointController{s, SERVO_CHANNEL_FRONT_RIGHT_WHEEL_VEL},
-                      JointController{s, SERVO_CHANNEL_REAR_RIGHT_WHEEL_VEL},
-                      JointController{s, SERVO_CHANNEL_REAR_LEFT_WHEEL_VEL}},
+DriveBase::DriveBase(ServoDriver& servoDriver)
+    : velocityControllers_{VelocityJointController{
+                               servoDriver,
+                               SERVO_CHANNEL_FRONT_RIGHT_WHEEL_VELOCITY},
+                           VelocityJointController{
+                               servoDriver,
+                               SERVO_CHANNEL_FRONT_LEFT_WHEEL_VELOCITY},
+                           VelocityJointController{
+                               servoDriver,
+                               SERVO_CHANNEL_REAR_LEFT_WHEEL_VELOCITY},
+                           VelocityJointController{
+                               servoDriver,
+                               SERVO_CHANNEL_REAR_RIGHT_WHEEL_VELOCITY}},
       angleControllers_{
-          JointController{s, SERVO_CHANNEL_FRONT_LEFT_WHEEL_ANGLE},
-          JointController{s, SERVO_CHANNEL_FRONT_RIGHT_WHEEL_ANGLE},
-          JointController{s, SERVO_CHANNEL_REAR_RIGHT_WHEEL_ANGLE},
-          JointController{s, SERVO_CHANNEL_REAR_LEFT_WHEEL_ANGLE}} {}
+          AngleJointController{servoDriver,
+                               SERVO_CHANNEL_FRONT_RIGHT_WHEEL_ANGLE},
+          AngleJointController{servoDriver,
+                               SERVO_CHANNEL_FRONT_LEFT_WHEEL_ANGLE},
+          AngleJointController{servoDriver,
+                               SERVO_CHANNEL_REAR_LEFT_WHEEL_ANGLE},
+          AngleJointController{servoDriver,
+                               SERVO_CHANNEL_REAR_RIGHT_WHEEL_ANGLE}} {}
 
 bool DriveBase::begin() {
     esp_timer_handle_t timer;
@@ -32,24 +44,24 @@ void DriveBase::step() {
         stop(); // because command timeout occurred
     }
     for (uint8_t i = 0; i < kWheelCount; ++i) {
-        velControllers_[i].step();
+        velocityControllers_[i].step();
         angleControllers_[i].step();
     }
 }
 
-void DriveBase::setVelocity(uint8_t wheelIdx, uint16_t command) {
-    velControllers_[wheelIdx].setPosition(command);
+void DriveBase::setVelocity(uint8_t wheelIdx, float metersPerSecond) {
+    velocityControllers_[wheelIdx].setPosition(metersPerSecond);
     lastCommandTimestamp_ = millis();
 }
 
-void DriveBase::setAngle(uint8_t wheelIdx, uint16_t command) {
-    angleControllers_[wheelIdx].setPosition(command);
+void DriveBase::setAngle(uint8_t wheelIdx, float radians) {
+    angleControllers_[wheelIdx].setPosition(radians);
     lastCommandTimestamp_ = millis();
 }
 
 void DriveBase::stop() {
     for (uint8_t i = 0; i < kWheelCount; ++i) {
-        velControllers_[i].setPosition(JointController::kZeroPosition);
-        angleControllers_[i].setPosition(JointController::kZeroPosition);
+        velocityControllers_[i].setPosition(0.0f);
+        angleControllers_[i].setPosition(0.0f);
     }
 }
