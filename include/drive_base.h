@@ -12,10 +12,12 @@ class DriveBase {
     void step();
     void setVelocity(uint8_t wheelIdx, uint16_t command);
     void setAngle(uint8_t wheelIdx, uint16_t command);
+    static constexpr uint8_t kWheelCount = 4;
+    static constexpr uint64_t kControlPeriod = 1e4;
 
   private:
-    JointController velControllers_[4];
-    JointController angleControllers_[4];
+    JointController velControllers_[kWheelCount];
+    JointController angleControllers_[kWheelCount];
 };
 
 #endif // DRIVE_BASE_H

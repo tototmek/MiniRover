@@ -23,12 +23,12 @@ bool DriveBase::begin() {
     esp_timer_create_args_t timerArgs = {.callback = motorControlCallback,
                                          .arg = (void*)this};
     esp_timer_create(&timerArgs, &timer);
-    auto result = esp_timer_start_periodic(timer, 1e4);
+    auto result = esp_timer_start_periodic(timer, kControlPeriod);
     return (result == ESP_OK);
 }
 
 void DriveBase::step() {
-    for (uint8_t i = 0; i < 4; ++i) {
+    for (uint8_t i = 0; i < kWheelCount; ++i) {
         velControllers_[i].step();
         angleControllers_[i].step();
     }

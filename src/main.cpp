@@ -1,7 +1,9 @@
 #include "main_system.h"
+#include "swerve_drive_controller.h"
 #include <Arduino.h>
 
 MainSystem mainSystem;
+SwerveDriveController swerveDrive{mainSystem.driveBase};
 
 void setup() {
     Serial.begin(115200);
@@ -29,10 +31,11 @@ void loop() {
         }
         Serial.println();
         if (message.data[0] = 0x01) {
-            mainSystem.driveBase.setVelocity(
-                FRONT_LEFT, map(message.data[1], 0, 255, 0, 4095));
-            mainSystem.driveBase.setAngle(
-                FRONT_LEFT, map(message.data[3], 0, 255, 0, 4095));
+            SwerveDriveController::Command command;
+            command.linear.x = map(message.data[1], 0, 256, 0, 4096);
+            command.linear.y = 0;
+            command.angular.z = map(message.data[3], 0, 256, 0, 4096);
+            swerveDrive.setCommand(command);
         }
     }
     delay(20);
