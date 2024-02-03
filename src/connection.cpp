@@ -2,9 +2,9 @@
 #include "definitions.h"
 #include <esp_timer.h>
 
-void broadcastTimerCallback(void* arg) {
+void statusTimerCallback(void* arg) {
     Connection* c = (Connection*)arg;
-    c->broadcast();
+    c->sendStatus();
 }
 
 void receiveTimerCallback(void* arg) {
@@ -12,33 +12,42 @@ void receiveTimerCallback(void* arg) {
     c->receive();
 }
 
-Connection::Connection() {
+Connection::Connection(Network& network) : network_(network) {
     messageQueue_ = xQueueCreate(UDP_MESSAGE_QUEUE_SIZE, sizeof(Message));
 }
 
 bool Connection::begin() {
     udpInputPort_.begin(UDP_IN_PORT);
     udpOutputPort_.begin(UDP_OUT_PORT);
-    esp_timer_create_args_t broadcastTimerArgs = {
-        .callback = broadcastTimerCallback,
+    esp_timer_create_args_t statusTimerArgs = {
+        .callback = statusTimerCallback,
         .arg = (void*)this,
     };
-    esp_timer_create(&broadcastTimerArgs, &broadcastTimer_);
+    esp_timer_create(&statusTimerArgs, &statusTimer_);
     esp_timer_create_args_t receiveTimerArgs = {
         .callback = receiveTimerCallback,
         .arg = (void*)this,
     };
     esp_timer_create(&receiveTimerArgs, &receiveTimer_);
-    bool resultB = esp_timer_start_periodic(broadcastTimer_,
-                                            kBroadcastTimerPeriod) == ESP_OK;
+    bool resultB =
+        esp_timer_start_periodic(statusTimer_, kStatusTimerPeriod) == ESP_OK;
     bool resultR =
         esp_timer_start_periodic(receiveTimer_, kReceiveTimerPeriod) == ESP_OK;
     return (resultB == ESP_OK && resultR == ESP_OK);
 }
 
-void Connection::broadcast() {
+bool Connection::getMessage(Message* dest) {
+    return (xQueueReceive(messageQueue_, (void*)dest, portMAX_DELAY) == pdPASS);
+}
+
+void Connection::setStatusMessageByte(uint8_t byteLocation, uint8_t value) {
+    statusData_.data[byteLocation] = value;
+}
+
+void Connection::sendStatus() {
+    statusData_.data[STATUS_MSG_RSSI] = network_.getAbsRssi();
     udpOutputPort_.beginPacket("255.255.255.255", UDP_OUT_PORT);
-    udpOutputPort_.write(broadcastData_.data, sizeof(broadcastData_.data));
+    udpOutputPort_.write(statusData_.data, sizeof(statusData_.data));
     udpOutputPort_.endPacket();
 }
 
@@ -48,15 +57,5 @@ void Connection::receive() {
         Message message;
         udpInputPort_.read(message.data, packetSize);
         xQueueSend(messageQueue_, &message, portMAX_DELAY);
-    }
-}
-
-bool Connection::getMessage(Message* dest) {
-    return (xQueueReceive(messageQueue_, (void*)dest, portMAX_DELAY) == pdPASS);
-}
-
-void Connection::setBroadcastMessage(const Message* data) {
-    for (uint i = 0; i < UDP_MESSAGE_SIZE; ++i) {
-        broadcastData_.data[i] = data->data[i];
     }
 }

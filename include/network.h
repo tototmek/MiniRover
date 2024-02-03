@@ -17,6 +17,7 @@ class Network {
   public:
     Network(Logger& logger);
     bool begin();
+    uint8_t getAbsRssi() const;
 
   private:
     enum class State {

@@ -14,6 +14,19 @@ bool Network::begin() {
     return result;
 }
 
+uint8_t Network::getAbsRssi() const {
+    switch (state_) {
+    case State::AP:
+        return 0;
+    case State::CONNECTED:
+        return abs(WiFi.RSSI());
+    case State::DISCONNECTED:
+    case State::INIT:
+    default:
+        return 100;
+    }
+}
+
 bool Network::createWiFi() {
     WiFi.mode(WIFI_AP);
     bool result = WiFi.softAP(WIFI_AP_CONFIG_SSID, WIFI_AP_CONFIG_PASSWORD,
@@ -61,8 +74,6 @@ void Network::handleWiFiEvent(WiFiEvent_t event, WiFiEventInfo_t info) {
     case SYSTEM_EVENT_STA_CONNECTED:
         state_ = State::CONNECTED;
         logger_.printf("Reconnected");
-        ip = WiFi.localIP();
-        logger_.printf("IP: %d.%d.%d.%d", ip[0], ip[1], ip[2], ip[3]);
         break;
     case SYSTEM_EVENT_STA_DISCONNECTED:
         if (state_ == State::CONNECTED) {

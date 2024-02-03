@@ -15,7 +15,7 @@ ServoDriver servo{I2C_SERVO_ADDRESS, i2cBus};
 DriveBase driveBase{servo};
 Buzzer buzzer{BUZZER_PIN};
 Network network{logger};
-Connection connection;
+Connection connection{network};
 
 void setup() {
     buzzer.begin();
@@ -38,8 +38,7 @@ void setup() {
     }
     logger.printf("Initializing WiFi...");
     network.begin();
-    Message broadcastMessage = {0x01, 0x01, 0x01, 0x01};
-    connection.setBroadcastMessage(&broadcastMessage);
+    connection.setStatusMessageByte(2, 0x01); // Arbitrary value
     connection.begin();
     buzzer.ok();
 }
@@ -61,5 +60,5 @@ void loop() {
                                map(message.data[3], 0, 255, 0, 4095));
         }
     }
-    delay(30);
+    delay(20);
 }
