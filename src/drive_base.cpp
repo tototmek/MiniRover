@@ -28,6 +28,9 @@ bool DriveBase::begin() {
 }
 
 void DriveBase::step() {
+    if (lastCommandTimestamp_ + kCommandTimeout < millis()) {
+        stop(); // because command timeout occurred
+    }
     for (uint8_t i = 0; i < kWheelCount; ++i) {
         velControllers_[i].step();
         angleControllers_[i].step();
@@ -36,8 +39,17 @@ void DriveBase::step() {
 
 void DriveBase::setVelocity(uint8_t wheelIdx, uint16_t command) {
     velControllers_[wheelIdx].setPosition(command);
+    lastCommandTimestamp_ = millis();
 }
 
 void DriveBase::setAngle(uint8_t wheelIdx, uint16_t command) {
     angleControllers_[wheelIdx].setPosition(command);
+    lastCommandTimestamp_ = millis();
+}
+
+void DriveBase::stop() {
+    for (uint8_t i = 0; i < kWheelCount; ++i) {
+        velControllers_[i].setPosition(JointController::kZeroPosition);
+        angleControllers_[i].setPosition(JointController::kZeroPosition);
+    }
 }

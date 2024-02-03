@@ -236,9 +236,10 @@ class Dampener {
 class JointController {
   public:
     JointController(ServoDriver& servoDriver, uint8_t servoChannel,
-                    uint16_t start_position = 2048);
+                    uint16_t start_position = kZeroPosition);
     void setPosition(uint16_t command);
     void step();
+    static constexpr uint16_t kZeroPosition = 2048;
 
   private:
     ServoDriver& servoDriver_;

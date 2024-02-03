@@ -15,7 +15,7 @@
 #define UDP_IN_PORT 21370
 #define UDP_OUT_PORT 21371
 
-// STATUS_MESSAGE_BYTE_LOCATIONS
+// Status message byte locations
 #define STATUS_MSG_FLAGS 1
 #define STATUS_MSG_POWER 2
 #define STATUS_MSG_RSSI 3
@@ -35,5 +35,8 @@
 #define FRONT_RIGHT 1
 #define REAR_RIGHT 2
 #define REAR_LEFT 3
+
+// Drive base parameters
+#define DRIVE_BASE_COMMAND_TIMEOUT 2000 // ms
 
 #endif // DEFINITIONS_H
