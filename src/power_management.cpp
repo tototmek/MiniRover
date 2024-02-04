@@ -30,12 +30,22 @@ bool PowerManagement::begin() {
                       INA226_MODE_SHUNT_BUS_CONT);
     sensor_.calibrate(CURRENT_SENSOR_SHUNT_RESISTANCE,
                       CURRENT_SENSOR_MAX_RANGE_CURRENT);
+    isOk_ = true;
     return true;
 }
 
-float PowerManagement::getVoltage() { return sensor_.readBusVoltage(); }
-float PowerManagement::getCurrent() { return sensor_.readShuntCurrent(); }
-float PowerManagement::getPower() { return sensor_.readBusPower(); }
+float PowerManagement::getVoltage() {
+    return (isOk_) ? sensor_.readBusVoltage() : 0.0f;
+}
+
+float PowerManagement::getCurrent() {
+    return (isOk_) ? sensor_.readShuntCurrent() : 0.0f;
+}
+
+float PowerManagement::getPower() {
+    return (isOk_) ? sensor_.readBusPower() : 0.0f;
+}
+
 uint8_t PowerManagement::getBatteryPercentage() {
-    return calculateBatteryPercentage(sensor_.readBusVoltage());
+    return calculateBatteryPercentage(getVoltage());
 }

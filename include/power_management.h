@@ -14,6 +14,7 @@ class PowerManagement {
     uint8_t getBatteryPercentage();
 
   private:
+    bool isOk_ = false;
     uint8_t i2cAddress_;
     INA226 sensor_;
 };
