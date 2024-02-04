@@ -12,7 +12,10 @@
 #define I2C_DISPLAY_ADDRESS 0x3C
 #define I2C_CURRENT_SENSOR_ADDRESS 0x40
 
-// Current sensor parameters
+// Power parameters
+#define BATTERY_MIN_VOLTAGE 6.0 // Volt
+#define BATTERY_MAX_VOLTAGE 8.4 // Volt
+#define BATTERY_PEUKERT_CONSTANT 1.3
 #define CURRENT_SENSOR_SHUNT_RESISTANCE 0.1  // Ohm
 #define CURRENT_SENSOR_MAX_RANGE_CURRENT 0.8 // Amper
 
@@ -70,8 +73,8 @@
 #define WIFI_CONNECT_TIMEOUT 15000 // miliseconds
 
 // Status message byte locations
-#define STATUS_MSG_FLAGS 1
-#define STATUS_MSG_POWER 2
-#define STATUS_MSG_RSSI 3
+#define STATUS_MSG_FLAGS 2
+#define STATUS_MSG_RSSI 1
+#define STATUS_MSG_POWER 3
 
 #endif // DEFINITIONS_H

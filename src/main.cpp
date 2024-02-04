@@ -1,13 +1,11 @@
 #include "main_system.h"
 #include "swerve_drive_controller.h"
 #include <Arduino.h>
-// #include <INA226_WE.h>
 #include <INA226.h>
 
 MainSystem mainSystem;
 SwerveDriveController swerveDrive{mainSystem.driveBase};
-// INA226_WE sensorMeasurement{I2C_CURRENT_SENSOR_ADDRESS};
-INA226 currentMeasurement{mainSystem.i2cBus};
+bool systemOk = false;
 
 float mapf(float x, float inMin, float inMax, float outMin, float outMax) {
     return (x - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
@@ -20,22 +18,20 @@ void setup() {
     }
     bool result = mainSystem.begin();
     if (result) {
-        mainSystem.logger.printf("Everything OK");
+        mainSystem.logger.printf("Systems started.");
+        systemOk = true;
     } else {
         mainSystem.logger.printf("Some systems failed");
     }
-    if (currentMeasurement.begin(I2C_CURRENT_SENSOR_ADDRESS)) {
-        mainSystem.logger.printf("C sensor initialized");
-    } else {
-        mainSystem.logger.printf("C sensor error");
-    }
-    currentMeasurement.configure(INA226_AVERAGES_1, INA226_BUS_CONV_TIME_1100US,
-                                 INA226_SHUNT_CONV_TIME_1100US,
-                                 INA226_MODE_SHUNT_BUS_CONT);
-    currentMeasurement.calibrate(0.1, 0.8);
 }
 
 void loop() {
+    mainSystem.connection.setStatusMessageByte(STATUS_MSG_FLAGS,
+                                               (systemOk) ? 0x01 : 0xFF);
+    mainSystem.connection.setStatusMessageByte(
+        STATUS_MSG_POWER, mainSystem.powerManagement.getBatteryPercentage());
+    mainSystem.connection.setStatusMessageByte(STATUS_MSG_RSSI,
+                                               mainSystem.network.getAbsRssi());
 
     Message message;
     if (mainSystem.connection.getMessage(&message)) {
@@ -68,16 +64,5 @@ void loop() {
             swerveDrive.setCommand(command);
         }
     }
-    Serial.println("Power measurements:");
-    float voltage = currentMeasurement.readBusVoltage();
-    float current = currentMeasurement.readShuntCurrent();
-    float power = currentMeasurement.readBusPower();
-    Serial.print("Voltage: ");
-    Serial.print(voltage, 3);
-    Serial.print(", Current: ");
-    Serial.print(current, 3);
-    Serial.print(", Power: ");
-    Serial.print(power, 3);
-    Serial.println();
     delay(20);
 }

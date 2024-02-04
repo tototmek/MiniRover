@@ -7,6 +7,7 @@
 #include "i2c.h"
 #include "logger.h"
 #include "network.h"
+#include "power_management.h"
 #include "servo_driver.h"
 #include <Wire.h>
 
@@ -17,6 +18,7 @@ class MainSystem {
     Buzzer buzzer;
     TwoWire i2cBus;
     Logger logger;
+    PowerManagement powerManagement;
     ServoDriver servoDriver;
     DriveBase driveBase;
     Network network;

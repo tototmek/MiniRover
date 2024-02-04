@@ -3,17 +3,26 @@
 
 MainSystem::MainSystem()
     : buzzer{BUZZER_PIN}, i2cBus{0}, logger{I2C_DISPLAY_ADDRESS, i2cBus},
+      powerManagement{I2C_CURRENT_SENSOR_ADDRESS, i2cBus},
       servoDriver{I2C_SERVO_ADDRESS, i2cBus}, driveBase{servoDriver},
       network{logger}, connection{network} {}
 
 bool MainSystem::begin() {
-    bool servoDriverOk, driveBaseOk, networkOk, connectionOk = false;
+    bool powerManagementOk, servoDriverOk, driveBaseOk, networkOk,
+        connectionOk = false;
     buzzer.begin();
     buzzer.wait();
     i2cBus.begin(21, 22);
     logger.begin();
     logger.printf("Initializing system");
     displayI2cDevices(i2cBus, logger);
+    powerManagementOk = powerManagement.begin();
+    if (powerManagementOk) {
+        logger.printf("Battery level %d%%",
+                      powerManagement.getBatteryPercentage());
+    } else {
+        logger.printf("Battery level unknown");
+    }
     servoDriverOk = servoDriver.begin();
     if (servoDriverOk) {
         driveBaseOk = driveBase.begin();
@@ -28,7 +37,8 @@ bool MainSystem::begin() {
     logger.printf("Initializing WiFi...");
     networkOk = network.begin();
     connectionOk = connection.begin();
-    bool result = (servoDriverOk && driveBaseOk && networkOk && connectionOk);
+    bool result = (powerManagementOk && servoDriverOk && driveBaseOk &&
+                   networkOk && connectionOk);
     if (result) {
         buzzer.ok();
     } else {

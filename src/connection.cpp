@@ -45,7 +45,6 @@ void Connection::setStatusMessageByte(uint8_t byteLocation, uint8_t value) {
 }
 
 void Connection::sendStatus() {
-    statusData_.data[STATUS_MSG_RSSI] = network_.getAbsRssi();
     udpOutputPort_.beginPacket("255.255.255.255", UDP_OUT_PORT);
     udpOutputPort_.write(statusData_.data, sizeof(statusData_.data));
     udpOutputPort_.endPacket();
