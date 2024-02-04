@@ -8,20 +8,17 @@
 #define BUZZER_PIN 12
 
 // I2C device addresses
-#define I2C_SERVO_ADDRESS 0x40
+#define I2C_SERVO_ADDRESS 0x41
 #define I2C_DISPLAY_ADDRESS 0x3C
+#define I2C_CURRENT_SENSOR_ADDRESS 0x40
 
-// WIFI settings
-#define WIFI_CONNECT_TIMEOUT 15000 // miliseconds
+// Current sensor parameters
+#define CURRENT_SENSOR_SHUNT_RESISTANCE 0.1  // Ohm
+#define CURRENT_SENSOR_MAX_RANGE_CURRENT 0.8 // Amper
 
 // UDP ports
 #define UDP_IN_PORT 21370
 #define UDP_OUT_PORT 21371
-
-// Status message byte locations
-#define STATUS_MSG_FLAGS 1
-#define STATUS_MSG_POWER 2
-#define STATUS_MSG_RSSI 3
 
 // Servo channels
 #define SERVO_CHANNEL_FRONT_RIGHT_WHEEL_VELOCITY 0
@@ -56,9 +53,9 @@
 #define REVERSE_FRONT_LEFT_WHEEL_VELOCITY true
 #define REVERSE_REAR_LEFT_WHEEL_VELOCITY false
 #define REVERSE_REAR_RIGHT_WHEEL_VELOCITY true
-#define REVERSE_FRONT_RIGHT_WHEEL_ANGLE true
+#define REVERSE_FRONT_RIGHT_WHEEL_ANGLE false
 #define REVERSE_FRONT_LEFT_WHEEL_ANGLE false
-#define REVERSE_REAR_LEFT_WHEEL_ANGLE true
+#define REVERSE_REAR_LEFT_WHEEL_ANGLE false
 #define REVERSE_REAR_RIGHT_WHEEL_ANGLE false
 
 // Servo calibration
@@ -68,5 +65,13 @@
 #define SERVO_ANGLE_LOWER_LIMIT_PULSE_TIME 500     // microseconds
 #define SERVO_VELOCITY_UPPER_LIMIT_PULSE_TIME 2000 // microseconds
 #define SERVO_VELOCITY_LOWER_LIMIT_PULSE_TIME 1000 // microseconds
+
+// WIFI settings
+#define WIFI_CONNECT_TIMEOUT 15000 // miliseconds
+
+// Status message byte locations
+#define STATUS_MSG_FLAGS 1
+#define STATUS_MSG_POWER 2
+#define STATUS_MSG_RSSI 3
 
 #endif // DEFINITIONS_H
