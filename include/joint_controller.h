@@ -27,6 +27,14 @@ class VelocityJointController : public JointController {
     void setVelocity(float metersPerSecond);
 
   private:
+    float velocityCoefficient = 200.0f * 2.0f / DRIVE_BASE_WHEEL_DIAMETER;
+    static constexpr uint16_t kZeroPwm = (1 << 12) * 1500 / kServoPeriod;
+    static constexpr uint16_t kMinDeadzone = (1 << 12) * 1450 / kServoPeriod;
+    static constexpr uint16_t kMaxDeadzone = (1 << 12) * 1550 / kServoPeriod;
+    static constexpr uint16_t kMinPulse = (1 << 12) * 950 / kServoPeriod;
+    static constexpr uint16_t kMaxPulse = (1 << 12) * 1950 / kServoPeriod;
+    static constexpr float kMinVelocity = DRIVE_BASE_MIN_WHEEL_VELOCITY;
+    static constexpr float kMaxVelocity = DRIVE_BASE_MAX_WHEEL_VELOCITY;
     uint16_t velocityToPwm(float metersPerSecond) const;
     bool reverseMotor_;
 };

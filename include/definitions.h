@@ -8,16 +8,16 @@
 #define BUZZER_PIN 12
 
 // I2C device addresses
-#define I2C_SERVO_ADDRESS 0x41
+#define I2C_SERVO_ADDRESS 0x61
 #define I2C_DISPLAY_ADDRESS 0x3C
-#define I2C_CURRENT_SENSOR_ADDRESS 0x40
+#define I2C_CURRENT_SENSOR_ADDRESS 0x41
 
 // Power parameters
 #define BATTERY_MIN_VOLTAGE 6.0 // Volt
 #define BATTERY_MAX_VOLTAGE 8.4 // Volt
 #define BATTERY_PEUKERT_CONSTANT 1.3
-#define CURRENT_SENSOR_SHUNT_RESISTANCE 0.1  // Ohm
-#define CURRENT_SENSOR_MAX_RANGE_CURRENT 0.8 // Amper
+#define CURRENT_SENSOR_SHUNT_RESISTANCE 0.005 // Ohm
+#define CURRENT_SENSOR_MAX_RANGE_CURRENT 16.0 // Amper
 
 // UDP ports
 #define UDP_IN_PORT 21370
@@ -32,6 +32,8 @@
 #define SERVO_CHANNEL_FRONT_LEFT_WHEEL_ANGLE 5
 #define SERVO_CHANNEL_REAR_LEFT_WHEEL_ANGLE 6
 #define SERVO_CHANNEL_REAR_RIGHT_WHEEL_ANGLE 7
+#define SERVO_CHANNEL_HEAD_RIGHT 12
+#define SERVO_CHANNEL_HEAD_LEFT 13
 
 // Wheel indices
 #define FRONT_RIGHT 0
@@ -52,8 +54,8 @@
 #define DRIVE_BASE_MAX_VELOCITY_LINEAR_Y 0.5   // meters/second
 #define DRIVE_BASE_MAX_VELOCITY_ANGULAR_Z 0.5  // radians/second
 
-#define REVERSE_FRONT_RIGHT_WHEEL_VELOCITY false
-#define REVERSE_FRONT_LEFT_WHEEL_VELOCITY true
+#define REVERSE_FRONT_RIGHT_WHEEL_VELOCITY true
+#define REVERSE_FRONT_LEFT_WHEEL_VELOCITY false
 #define REVERSE_REAR_LEFT_WHEEL_VELOCITY false
 #define REVERSE_REAR_RIGHT_WHEEL_VELOCITY true
 #define REVERSE_FRONT_RIGHT_WHEEL_ANGLE false
@@ -62,12 +64,10 @@
 #define REVERSE_REAR_RIGHT_WHEEL_ANGLE false
 
 // Servo calibration
-#define SERVO_MIN_PULSE_TIME 500                   // microseconds
-#define SERVO_MAX_PULSE_TIME 2500                  // microseconds
-#define SERVO_ANGLE_UPPER_LIMIT_PULSE_TIME 2500    // microseconds
-#define SERVO_ANGLE_LOWER_LIMIT_PULSE_TIME 500     // microseconds
-#define SERVO_VELOCITY_UPPER_LIMIT_PULSE_TIME 2000 // microseconds
-#define SERVO_VELOCITY_LOWER_LIMIT_PULSE_TIME 1000 // microseconds
+#define SERVO_MIN_PULSE_TIME 500                // microseconds
+#define SERVO_MAX_PULSE_TIME 2500               // microseconds
+#define SERVO_ANGLE_UPPER_LIMIT_PULSE_TIME 2500 // microseconds
+#define SERVO_ANGLE_LOWER_LIMIT_PULSE_TIME 500  // microseconds
 
 // WIFI settings
 #define WIFI_CONNECT_TIMEOUT 15000 // miliseconds
