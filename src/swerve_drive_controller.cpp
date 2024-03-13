@@ -34,42 +34,44 @@ void SwerveDriveController::setCommand(WheelCommand command) {
 
 void SwerveDriveController::processTargetValues() {
     for (uint8_t i = 0; i < DriveBase::kWheelCount; ++i) {
-        // Flip the wheel if angle is outside limits
-        Serial.print("Target: ");
-        Serial.print(targetWheelAngle[i]);
-        float difference =
-            angleDifference(targetWheelAngle[i], driveBase_.getAngle(i));
-        Serial.print(" Current: ");
-        Serial.print(driveBase_.getAngle(i));
-        Serial.print(" Difference: ");
-        Serial.print(difference);
-        if (targetWheelAngle[i] > DRIVE_BASE_MAX_WHEEL_ANGLE) {
-            targetWheelAngle[i] -= M_PI;
-            targetWheelVelocity[i] = -targetWheelVelocity[i];
-            Serial.print(targetWheelAngle[i]);
-        } else if (targetWheelAngle[i] < DRIVE_BASE_MIN_WHEEL_ANGLE) {
-            targetWheelAngle[i] += M_PI;
-            targetWheelVelocity[i] = -targetWheelVelocity[i];
-            Serial.print(targetWheelAngle[i]);
-        } else { // Flip the wheel if it means less movement
-            if (difference > M_PI_2 &&
-                targetWheelAngle[i] + M_PI < DRIVE_BASE_MAX_WHEEL_ANGLE) {
-                Serial.print(" Flipping to reduce movement");
-                targetWheelAngle[i] += M_PI;
-                targetWheelVelocity[i] = -targetWheelVelocity[i];
-            } else if (difference < -M_PI_2 && targetWheelAngle[i] - M_PI >
-                                                   DRIVE_BASE_MIN_WHEEL_ANGLE) {
-                Serial.print(" Flipping to reduce movement");
-                targetWheelAngle[i] -= M_PI;
-                targetWheelVelocity[i] = -targetWheelVelocity[i];
-            }
+        if (!flipWheelWhenOutsideLimits(i)) {
+            flipWheelToReduceMovement(i);
         }
 
         // TODO: ensure velocities within limits, else scale down
-        // TODO: scale down velocity / stop if wheel angles are not yet
-        // correct
-        Serial.println();
+
+        // TODO: scale down velocity / stop if wheel angles are not good
     }
+}
+
+bool SwerveDriveController::flipWheelWhenOutsideLimits(uint8_t wheelIdx) {
+    bool flipped = false;
+    if (targetWheelAngle[wheelIdx] > DRIVE_BASE_MAX_WHEEL_ANGLE) {
+        targetWheelAngle[wheelIdx] -= M_PI;
+        targetWheelVelocity[wheelIdx] = -targetWheelVelocity[wheelIdx];
+        flipped = true;
+    } else if (targetWheelAngle[wheelIdx] < DRIVE_BASE_MIN_WHEEL_ANGLE) {
+        targetWheelAngle[wheelIdx] += M_PI;
+        targetWheelVelocity[wheelIdx] = -targetWheelVelocity[wheelIdx];
+        flipped = true;
+    }
+    return flipped;
+}
+
+bool SwerveDriveController::flipWheelToReduceMovement(uint8_t wheelIdx) {
+    bool flipped = false;
+    float difference = angleDifference(targetWheelAngle[wheelIdx],
+                                       driveBase_.getAngle(wheelIdx));
+    if (difference > M_PI_2 &&
+        targetWheelAngle[wheelIdx] + M_PI < DRIVE_BASE_MAX_WHEEL_ANGLE) {
+        targetWheelAngle[wheelIdx] += M_PI;
+        targetWheelVelocity[wheelIdx] = -targetWheelVelocity[wheelIdx];
+    } else if (difference < -M_PI_2 &&
+               targetWheelAngle[wheelIdx] - M_PI > DRIVE_BASE_MIN_WHEEL_ANGLE) {
+        targetWheelAngle[wheelIdx] -= M_PI;
+        targetWheelVelocity[wheelIdx] = -targetWheelVelocity[wheelIdx];
+    }
+    return flipped;
 }
 
 void SwerveDriveController::sendTargetValues() {

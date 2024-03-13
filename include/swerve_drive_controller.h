@@ -29,6 +29,8 @@ class SwerveDriveController {
 
   private:
     void processTargetValues();
+    bool flipWheelWhenOutsideLimits(uint8_t wheelIdx);
+    bool flipWheelToReduceMovement(uint8_t wheelIdx);
     void sendTargetValues();
     DriveBase& driveBase_;
     float targetWheelVelocity[DriveBase::kWheelCount] = {0.0f};
