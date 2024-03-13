@@ -7,6 +7,7 @@
 #include "i2c.h"
 #include "logger.h"
 #include "network.h"
+#include "pan_tilt_head.h"
 #include "power_management.h"
 #include "servo_driver.h"
 #include <Wire.h>
@@ -21,6 +22,7 @@ class MainSystem {
     PowerManagement powerManagement;
     ServoDriver servoDriver;
     DriveBase driveBase;
+    PanTiltHead head;
     Network network;
     Connection connection;
 };

@@ -5,10 +5,10 @@ MainSystem::MainSystem()
     : buzzer{BUZZER_PIN}, i2cBus{0}, logger{I2C_DISPLAY_ADDRESS, i2cBus},
       powerManagement{I2C_CURRENT_SENSOR_ADDRESS, i2cBus},
       servoDriver{I2C_SERVO_ADDRESS, i2cBus}, driveBase{servoDriver},
-      network{logger}, connection{network} {}
+      head{servoDriver}, network{logger}, connection{network} {}
 
 bool MainSystem::begin() {
-    bool powerManagementOk, servoDriverOk, driveBaseOk, networkOk,
+    bool powerManagementOk, servoDriverOk, driveBaseOk, headOk, networkOk,
         connectionOk = false;
     buzzer.begin();
     buzzer.wait();
@@ -31,6 +31,7 @@ bool MainSystem::begin() {
             servoDriver.arm();
             logger.printf("Motors armed");
         }
+        headOk = head.begin();
     } else {
         logger.printf("Servo driver: off");
     }
@@ -38,7 +39,7 @@ bool MainSystem::begin() {
     networkOk = network.begin();
     connectionOk = connection.begin();
     bool result = (powerManagementOk && servoDriverOk && driveBaseOk &&
-                   networkOk && connectionOk);
+                   headOk && networkOk && connectionOk);
     if (result) {
         buzzer.ok();
     } else {

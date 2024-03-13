@@ -25,6 +25,8 @@ void setup() {
     }
 }
 
+uint16_t time_temp = 0;
+
 void loop() {
     mainSystem.connection.setStatusMessageByte(STATUS_MSG_FLAGS,
                                                (systemOk) ? 0x01 : 0xFF);
@@ -43,26 +45,29 @@ void loop() {
         }
         Serial.println();
         if (message.data[0] = 0x01) {
-            SwerveDriveController::WheelCommand command;
-            command.wheel = FRONT_RIGHT;
-            command.velocity = mapf(message.data[1], 0.0f, 256.0f,
-                                    DRIVE_BASE_MIN_WHEEL_VELOCITY,
-                                    DRIVE_BASE_MAX_WHEEL_VELOCITY);
-            command.angle =
-                mapf(message.data[3], 0.0f, 256.0f, DRIVE_BASE_MIN_WHEEL_ANGLE,
-                     DRIVE_BASE_MAX_WHEEL_ANGLE);
-            Serial.print("Command: ");
-            Serial.print(command.velocity);
-            Serial.print(", ");
-            Serial.println(command.angle);
-            swerveDrive.setCommand(command);
-            command.wheel = FRONT_LEFT;
-            swerveDrive.setCommand(command);
-            command.wheel = REAR_LEFT;
-            swerveDrive.setCommand(command);
-            command.wheel = REAR_RIGHT;
+            SwerveDriveController::TwistCommand command;
+            command.linear.x = mapf(message.data[1], 0.0f, 256.0f,
+                                    -DRIVE_BASE_MAX_VELOCITY_LINEAR_X,
+                                    DRIVE_BASE_MAX_VELOCITY_LINEAR_X);
+            command.linear.y = mapf(message.data[2], 0.0f, 256.0f,
+                                    -DRIVE_BASE_MAX_VELOCITY_LINEAR_Y,
+                                    DRIVE_BASE_MAX_VELOCITY_LINEAR_Y);
+            command.angular.z = mapf(message.data[3], 0.0f, 256.0f,
+                                     -DRIVE_BASE_MAX_VELOCITY_ANGULAR_Z,
+                                     DRIVE_BASE_MAX_VELOCITY_ANGULAR_Z);
             swerveDrive.setCommand(command);
         }
     }
+
+    // Random head movement
+    ++time_temp;
+    if (time_temp > 50) {
+        Serial.println("Moving head...");
+        time_temp = esp_random() % 40;
+        mainSystem.head.setOrientation(
+            ((float(esp_random() % 1000)) - 500.0f) / 500.0f * 1.5f,
+            ((float(esp_random() % 1000)) - 500.0f) / 500.0f * 1.5f);
+    }
+
     delay(20);
 }

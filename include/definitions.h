@@ -50,9 +50,9 @@
 #define DRIVE_BASE_MIN_WHEEL_VELOCITY -0.5     // meters/second
 #define DRIVE_BASE_MAX_WHEEL_ANGLE 2.61799388  // radians
 #define DRIVE_BASE_MIN_WHEEL_ANGLE -2.61799388 // radians
-#define DRIVE_BASE_MAX_VELOCITY_LINEAR_X 0.5   // meters/second
-#define DRIVE_BASE_MAX_VELOCITY_LINEAR_Y 0.5   // meters/second
-#define DRIVE_BASE_MAX_VELOCITY_ANGULAR_Z 0.5  // radians/second
+#define DRIVE_BASE_MAX_VELOCITY_LINEAR_X 0.2   // meters/second
+#define DRIVE_BASE_MAX_VELOCITY_LINEAR_Y 0.2   // meters/second
+#define DRIVE_BASE_MAX_VELOCITY_ANGULAR_Z 1.0  // radians/second
 
 #define REVERSE_FRONT_RIGHT_WHEEL_VELOCITY true
 #define REVERSE_FRONT_LEFT_WHEEL_VELOCITY false

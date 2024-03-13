@@ -66,6 +66,14 @@ void DriveBase::setAngle(uint8_t wheelIdx, float radians) {
     lastCommandTimestamp_ = millis();
 }
 
+float DriveBase::getAngle(uint8_t wheelIdx) const {
+    return angleControllers_[wheelIdx].getAngle();
+}
+
+float DriveBase::getActualDampenedAngle(uint8_t wheelIdx) const {
+    return angleControllers_[wheelIdx].getActualDampenedAngle();
+}
+
 void DriveBase::stop() {
     for (uint8_t i = 0; i < kWheelCount; ++i) {
         velocityControllers_[i].setVelocity(0.0f);

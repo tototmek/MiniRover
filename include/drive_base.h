@@ -12,6 +12,8 @@ class DriveBase {
     void step();
     void setVelocity(uint8_t wheelIdx, float metersPerSecond);
     void setAngle(uint8_t wheelIdx, float radians);
+    float getAngle(uint8_t wheelIdx) const;
+    float getActualDampenedAngle(uint8_t wheelIdx) const;
     void stop();
     // Number of wheels on the robot
     static constexpr uint8_t kWheelCount = 4;
