@@ -37,11 +37,8 @@ void SwerveDriveController::processTargetValues() {
         if (!flipWheelWhenOutsideLimits(i)) {
             flipWheelToReduceMovement(i);
         }
-
-        // TODO: ensure velocities within limits, else scale down
-
-        // TODO: scale down velocity / stop if wheel angles are not good
     }
+    waitForWheelAngle();
 }
 
 bool SwerveDriveController::flipWheelWhenOutsideLimits(uint8_t wheelIdx) {
@@ -72,6 +69,23 @@ bool SwerveDriveController::flipWheelToReduceMovement(uint8_t wheelIdx) {
         targetWheelVelocity[wheelIdx] = -targetWheelVelocity[wheelIdx];
     }
     return flipped;
+}
+
+void SwerveDriveController::waitForWheelAngle() {
+    float maxDifference = 0.0f;
+    float difference = 0.0f;
+    for (uint8_t i = 0; i < DriveBase::kWheelCount; ++i) {
+        difference = fabs(angleDifference(
+            targetWheelAngle[i], driveBase_.getActualDampenedAngle(i)));
+        if (difference > maxDifference) {
+            maxDifference = difference;
+        }
+    }
+    if (maxDifference > SWERVE_DRIVE_STOPPING_ANGLE_THRESHOLD) {
+        for (uint8_t i = 0; i < DriveBase::kWheelCount; ++i) {
+            targetWheelVelocity[i] = 0.0f;
+        }
+    }
 }
 
 void SwerveDriveController::sendTargetValues() {

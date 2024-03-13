@@ -54,6 +54,9 @@
 #define DRIVE_BASE_MAX_VELOCITY_LINEAR_Y 0.2   // meters/second
 #define DRIVE_BASE_MAX_VELOCITY_ANGULAR_Z 1.0  // radians/second
 
+// Swerve drive parameters
+#define SWERVE_DRIVE_STOPPING_ANGLE_THRESHOLD 0.5 // radians
+
 #define REVERSE_FRONT_RIGHT_WHEEL_VELOCITY true
 #define REVERSE_FRONT_LEFT_WHEEL_VELOCITY false
 #define REVERSE_REAR_LEFT_WHEEL_VELOCITY false
